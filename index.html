@@ -147,7 +147,7 @@
 
     <div class="btn-area" id="btnArea">
       <button class="btn-yes" onclick="sayYes()">Yes</button>
-      <button class="btn-no" id="noBtn" onpointerenter="runAway(event)" onpointerdown="runAway(event)" onclick="runAway(event)">No</button>
+      <button class="btn-no" id="noBtn" onpointerenter="runAway(event)" onpointerdown="runAway(event)">No</button>
     </div>
   </div>
 
@@ -198,6 +198,14 @@
 <script>
 var noCount = 0;
 var maxR = 110;
+var MIN_NO_SCALE = 0.28;
+var BASE_ESCAPE_X = 90;
+var ESCAPE_X_PER_TRY = 18;
+var BASE_ESCAPE_Y = 35;
+var ESCAPE_Y_PER_TRY = 10;
+var MAX_YES_SCALE = 2.4;
+var BASE_YES_SCALE = 1.15;
+var YES_SCALE_PER_TRY = 0.2;
 
 function runAway(event) {
   noCount++;
@@ -205,15 +213,15 @@ function runAway(event) {
   var area = document.getElementById('btnArea');
   var areaW = area.offsetWidth || 300;
   var areaH = area.offsetHeight || 170;
-  var scale = Math.max(0.28, 1 - noCount * 0.1);
+  var scale = Math.max(MIN_NO_SCALE, 1 - noCount * 0.1);
   var rx = (Math.random() - 0.5) * areaW * 0.95;
   var ry = (Math.random() - 0.5) * areaH * 1.2;
   if (event && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
     var r = area.getBoundingClientRect();
     var pointerFromCenterX = event.clientX - (r.left + r.width / 2);
     var pointerFromCenterY = event.clientY - (r.top + r.height / 2);
-    rx += (pointerFromCenterX >= 0 ? -1 : 1) * (90 + noCount * 18);
-    ry += (pointerFromCenterY >= 0 ? -1 : 1) * (35 + noCount * 10);
+    rx += (pointerFromCenterX >= 0 ? -1 : 1) * (BASE_ESCAPE_X + noCount * ESCAPE_X_PER_TRY);
+    ry += (pointerFromCenterY >= 0 ? -1 : 1) * (BASE_ESCAPE_Y + noCount * ESCAPE_Y_PER_TRY);
   }
   var maxRX = areaW * 0.48;
   var maxRY = areaH * 0.7;
@@ -222,7 +230,7 @@ function runAway(event) {
   btn.style.transition = 'transform 0.18s cubic-bezier(0.175,0.885,0.32,1.275), left 0.18s, top 0.18s';
   btn.style.transform = 'translate(' + (60 + rx) + 'px, calc(-50% + ' + ry + 'px)) scale(' + scale + ')';
   var yes = document.querySelector('.btn-yes');
-  var ys = Math.min(2.4, 1.15 + noCount * 0.2);
+  var ys = Math.min(MAX_YES_SCALE, BASE_YES_SCALE + noCount * YES_SCALE_PER_TRY);
   yes.style.transform = 'scale(' + ys + ')';
   if (noCount >= 10) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
 }
